@@ -5,7 +5,7 @@
 	Author URI: http://bestrag.net
 	Class Name: ScrollNav
 	Demo: http://bestrag.net/scroll-nav/demo
-	Description: Scroll Nav allows users to build custom one-page navigation menu. It offers full controll and default blueprint set that is easy to customize and place on various portions of your page.
+	Description:  Scroll Nav helps users build a custom one-page navigation menu. It offers full style control with different layout options, is easy to customize, and can be placed anywhere!
 	Version: 3.1
 	V3: true
 	Filter: nav
@@ -250,7 +250,7 @@ class ScrollNav extends PageLinesSection {
 					'key'		=> 'snav_docs',
 					'type'		=> 'link',
 					'classes'	=> 'btn-info',
-					'url'		=> 'http://bestrag.net/scroll-nav/docs',
+					'url'		=> 'http://bestrag.net/scroll-nav/doc',
 					'label'		=> __( 'Docs and Config', 'pagelines' )
 				)
 			)
