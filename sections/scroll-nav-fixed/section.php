@@ -27,6 +27,8 @@ class ScrollNavFixed extends PageLinesSection {
 		$snav_target_offset	= ($this->opt('snav_target_offset')) ? ($this->opt('snav_target_offset')) : '0';
 		$snav_menu_offset	= ($this->opt('snav_menu_offset')) ? ($this->opt('snav_menu_offset')) : '0';
 		$snav_animated		= ($this->opt('snav_animated')) ? 'true' : '';
+		$snav_page_offset		= ($this->opt('snav_page_offset')) ? 'true' : '';
+		
 		//To top options
 		$snav_to_top		= ($this->opt('snav_to_top')) ? 'true' : '';
 		$snav_to_top_txt	= ($this->opt('snav_to_top_txt')) ? ($this->opt('snav_to_top_txt')) : '';
@@ -147,6 +149,7 @@ class ScrollNavFixed extends PageLinesSection {
 				//fix menu to top
 				snavContainerHeight	= snavContainer.innerHeight();
 				menuOffset   		= canvasOffset + <?php print $snav_menu_offset; ?>;
+				if( '<?php print $snav_page_offset; ?>' ) snavStickyWraper.height( outerHeight(snavContainer) );
 				snavContainer.css({'top': '+=' + menuOffset, 'position':'fixed'});
 				//active class
 				snavLinks		= $('a[data-sntarget]', ul);
@@ -252,6 +255,12 @@ class ScrollNavFixed extends PageLinesSection {
 					'key'			=> 'snav_menu_offset',
 					'type' 			=> 'text',
 					'label' 		=> __( 'Scroll Menu Top Position', 'pagelines' ),
+				),
+				array(
+					'key'			=> 'snav_page_offset',
+					'type' 			=> 'check',
+					'default'		=> true,
+					'label' 		=> __( 'Push page content bellow Scroll Nav', 'pagelines' ),
 				)
 			)
 		);
