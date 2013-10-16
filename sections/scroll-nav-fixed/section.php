@@ -147,9 +147,9 @@ class ScrollNavFixed extends PageLinesSection {
 				$ = jQuery;
 				targetOffset  = stickyFix - targetOffset;
 				//fix menu to top
-				snavContainerHeight	= snavContainer.innerHeight();
+				snavContainerHeight = snavContainer.outerHeight();
 				menuOffset   		= canvasOffset + <?php print $snav_menu_offset; ?>;
-				if( '<?php print $snav_page_offset; ?>' ) snavStickyWraper.height( outerHeight(snavContainer) );
+				if( '<?php print $snav_page_offset; ?>' ) snavStickyWraper.height( snavContainerHeight );
 				snavContainer.css({'top': '+=' + menuOffset, 'position':'fixed'});
 				//active class
 				snavLinks		= $('a[data-sntarget]', ul);
@@ -158,7 +158,6 @@ class ScrollNavFixed extends PageLinesSection {
 					target	= '#' + me.data('sntarget');
 			        $(target).waypoint({handler: function(direction) {
 						var snavLink     = $('a[data-sntarget=' + $(this).attr('id') + ']', ul);
-						console.log(me, snavLink);
 						var snavLinkPrev = snavLink.closest('li').prev().children('a');
 			        	if (direction === "up") snavLink = snavLinkPrev;
 	                	snavLinks.removeClass('active');
@@ -260,7 +259,7 @@ class ScrollNavFixed extends PageLinesSection {
 					'key'			=> 'snav_page_offset',
 					'type' 			=> 'check',
 					'default'		=> true,
-					'label' 		=> __( 'Push page content bellow Scroll Nav', 'pagelines' ),
+					'label' 		=> __( 'Push page content below Scroll Nav', 'pagelines' ),
 				)
 			)
 		);
