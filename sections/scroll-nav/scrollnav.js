@@ -1,5 +1,5 @@
 jQuery(document).ready(function() {
-    
+
     //local vars
     var         $               =           jQuery;
     var         parseClass      =           '.scroll-header';
@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
     var ScrollNav = function(options){
         this.options = options;
     };
-    
+
     //prototype
     ScrollNav.prototype = {
         defaults: {
@@ -34,15 +34,14 @@ jQuery(document).ready(function() {
     $.fn.scrollNav = function(options) {
         return new ScrollNav(options).init();
     };
-    
-   
+
+
     //exec
     plContent.find(parseClass).each(function(){
         var me = $(this);
         myTitle = me.attr('title');
         myId = me.attr('id');
-        ul.append('<li><a data-sntarget="' + myId + '" class="scroll-nav-anchor" href="#"><span class="snav-title snav-dom-title">' + myTitle + '</span></a></li>');
-        
+        ul.append('<li><a data-sntarget="' + myId + '" class="scroll-nav-anchor" href="#" data-dom-title="'+ myTitle +'"></a></li>');
     });
 
 });

@@ -4,14 +4,14 @@
 	Author: bestrag
 	Author URI: http://bestrag.net
 	Class Name: ScrollNavFixed
-	Demo: http://bestrag.net/scroll-nav/demo
-	Description: Scroll Nav helps users build a custom one-page navigation menu. It offers full style control with different layout options, is easy to customize, and can be placed anywhere!
-	Version: 3.1
+	Demo: http://bestrag.net/scroll-nav/fixed-demo
+	Description: Scroll Nav Fixed allows users to build custom one-page navigation menu. It offers default blueprint set that is easy to customize or place on various portions of your page.
+	Version: 3.2
 	V3: true
 	Filter: full-width, nav
 */
 class ScrollNavFixed extends PageLinesSection {
-	
+
 	var $default_template = 'top-center-blueprint';
 	/* section_styles */
 	function section_scripts(){
@@ -28,7 +28,7 @@ class ScrollNavFixed extends PageLinesSection {
 		$snav_menu_offset	= ($this->opt('snav_menu_offset')) ? ($this->opt('snav_menu_offset')) : '0';
 		$snav_animated		= ($this->opt('snav_animated')) ? 'true' : '';
 		$snav_page_offset		= ($this->opt('snav_page_offset')) ? 'true' : '';
-		
+
 		//To top options
 		$snav_to_top		= ($this->opt('snav_to_top')) ? 'true' : '';
 		$snav_to_top_txt	= ($this->opt('snav_to_top_txt')) ? ($this->opt('snav_to_top_txt')) : '';
@@ -40,27 +40,40 @@ class ScrollNavFixed extends PageLinesSection {
 		$snav_custom_subtxt	= ($this->opt('snav_custom_subtxt')) ? ($this->opt('snav_custom_subtxt')) : '';
 		$snav_custom_icon	= ($this->opt('snav_custom_icon')) ? ($this->opt('snav_custom_icon')) : '';
 		//menu items layout
-		$snav_layout_string	= ($this->opt('snav_layout')) ? ($this->opt('snav_layout')) : 'txt subtxt icon';
-		$snav_layout		= explode(" ", $snav_layout_string);
+		$snav_elem		= array();
+		$snav_elem[0]		= ($this->opt('snav_elem1')) ? ($this->opt('snav_elem1')) : 'icon';
+		$snav_elem[1]		= ($this->opt('snav_elem2')) ? ($this->opt('snav_elem2')) : 'txt';
+		$snav_elem[2]		= ($this->opt('snav_elem3')) ? ($this->opt('snav_elem3')) : 'subtxt';
+		$snav_elem		= json_encode($snav_elem);
 		//put all menu item elements into arrays
 		$snav_item_count	= ($this->opt('snav_item_count')) ? $this->opt('snav_item_count') : 4;
+		$snav_items		= array();
 		$snav_icon_array	= array();
-		$snav_txt_array		= array();
+		$snav_txt_array	= array();
 		$snav_subtxt_array	= array();
-        for($i = 1; $i <= $snav_item_count; $i++){
-			$snav_icon_array[$i]	= ($this->opt('snav_item'.$i.'_icon')) ? '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'.$this->opt('snav_item'.$i.'_icon').'"></i></span>' : '';
-			$snav_txt_array[$i]		= ($this->opt('snav_item'.$i.'_txt')) ? '<span class="snav-title">'.$this->opt('snav_item'.$i.'_txt').'</span>' : '';
-			$snav_subtxt_array[$i]	= ($this->opt('snav_item'.$i.'_subtxt')) ? '<span class="snav-subtitle">'.$this->opt('snav_item'.$i.'_subtxt').'</span>' : '';
-        }
+		for($i = 0; $i < $snav_item_count; $i++){
+			$ii = $i+1;
+			$snav_txt_array[$i]	= ($this->opt('snav_item'.$ii.'_txt')) ? '<span class="snav-title">'.$this->opt('snav_item'.$ii.'_txt').'</span>' : '';
+
+			$snav_icon_array[$i]	= ($this->opt('snav_item'.$ii.'_icon')) ? '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'.$this->opt('snav_item'.$ii.'_icon').'"></i></span>' : '';
+
+			$snav_subtxt_array[$i]	= ($this->opt('snav_item'.$ii.'_subtxt')) ? '<span class="snav-subtitle">'.$this->opt('snav_item'.$ii.'_subtxt').'</span>' : '';
+		}
+		$snav_items['txt']		= $snav_txt_array;
+		$snav_items['subtxt']		= $snav_subtxt_array;
+		$snav_items['icon']		= $snav_icon_array;
+		$snav_items			= json_encode($snav_items);
+
 		?>
 		<script type="text/javascript">
-			var snav				= '';
-			var snavStickyWraper	= '';
+			var snav			= '';
+			var snavStickyWraper		= '';
 			var snavContainer		= '';
-			var ul					= '';
+			var ul				= '';
+			var lia				='';
 			var canvasOffset		= '';
-			var snavContainerHeight	= '';
-			var targetOffset		= '';
+			var snavContainerHeight		= '';
+			var targetOffset			= '';
 			var menuOffset			= '';
 			var snavLinks			= '';
 			var stickyFix			= 10;
@@ -68,18 +81,30 @@ class ScrollNavFixed extends PageLinesSection {
 			jQuery(document).ready(function(){
 				$ = jQuery;
 				//get menu item elements
-				var layout			= <?php echo json_encode($snav_layout); ?>;
-				var snavTxt			= <?php echo json_encode($snav_txt_array); ?>;
-				var snavSubtxt		= <?php echo json_encode($snav_subtxt_array); ?>;
-				var snavIcon		= <?php echo json_encode($snav_icon_array); ?>;
+				//var layout			= <?php echo json_encode($snav_layout); ?>;
+				//var snavTxt			= <?php echo json_encode($snav_txt_array); ?>;
+				//var snavSubtxt		= <?php echo json_encode($snav_subtxt_array); ?>;
+				//var snavIcon		= <?php echo json_encode($snav_icon_array); ?>;
+				var snavItems		= <?php echo $snav_items; ?>;
+				var elem		= <?php echo $snav_elem; ?>;
+				var topElem1		= '';
+				var topElem2		= '';
+				var topElem3		= '';
+				var customElem1	= '';
+				var customElem2	= '';
+				var customElem3	= '';
+				var topItem 		= [];
+				var customItem 	= [];
 				//copy vars from dom
-				snav				= $('section#scroll-nav-fixed'+'<?php echo $this->meta['clone']; ?>');
+				snav			= $('section#scroll-nav-fixed'+'<?php echo $this->meta['clone']; ?>');
 				snavStickyWraper	= $('.pl-area-pad', snav);
 				snavContainer		= $('.scrollnav', snav);
-				ul					= $('ul.nav', snavContainer);
+				ul			= $('ul.nav', snavContainer);
 				//offset calc		- for menu positioning and target offset
 				canvasOffset		= $('#page div.page-canvas').offset().top;
-				targetOffset		= - (canvasOffset + <?php print $snav_target_offset; ?> + 85);
+				snavHeight			= snav.outerHeight();
+				snavContainerHeight	= snavContainer.outerHeight();
+				targetOffset		= - (canvasOffset + <?php print $snav_target_offset; ?> + snavHeight);
 				//initialize scrollNav()
 				snavContainer.scrollNav({
 						scrollSpeed:    <?php print $snav_speed; ?> ,
@@ -87,38 +112,30 @@ class ScrollNavFixed extends PageLinesSection {
 				});
 				//append/substitute menu item elements
 				ul.children().each(function( i ){
-					i++;
 					a = $(this).find('a');
 					//menu item element that uses $('scroll-header[title]') atribute
 					domTitle = $('span.snav-dom-title',a);
 					//append item elements and apply item layout
-					if( $.inArray('txt', layout) !== -1 ){
-						if( snavTxt[i] ) domTitle.hide();
-					}else{
-						domTitle.hide();
-						snavTxt[i] = '';
-					}
-					if($.inArray('subtxt', layout)	=== -1) snavSubtxt[i] = '';
-					if($.inArray('icon', layout)	=== -1) snavIcon[i] = '';
-					a.prepend(snavIcon[i]).append(snavTxt[i], snavSubtxt[i]);
+					domTitle = a.data('domTitle') ;
+					if(snavItems['txt'][i] === '') snavItems['txt'][i] = '<span class="snav-title snav-dom-title">' + domTitle + '</span>';
+					elem1	= (elem[0] !== 'none') ? snavItems[elem[0]][i] : '';
+					elem2	= (elem[1] !== 'none') ? snavItems[elem[1]][i] : '';
+					elem3	= (elem[2] !== 'none') ? snavItems[elem[2]][i] : '';
+					a.append(elem1, elem2, elem3);
+
 				});
 				//add scroll to top
 				if('<?php print $snav_to_top;?>'){
-					var topTxt = '';
-					var topSubtxt = '';
-					var topIcon = '';
 					//prepend item and apply item layout
-					if(($.inArray('txt', layout) 	!== -1) && '<?php print $snav_to_top_txt;?>'){
-						topTxt		= '<span class="snav-title"><?php print $snav_to_top_txt;?></span>';
-					}
-					if(($.inArray('subtxt', layout)	!== -1) && '<?php print $snav_to_top_subtxt;?>'){
-						topSubtxt	= '<span class="snav-subtitle"><?php print $snav_to_top_subtxt;?></span>';
-					}
-					if(($.inArray('icon', layout) 	!== -1) && '<?php print $snav_to_top_icon;?>'){
-						topIcon		= '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-<?php print $snav_to_top_icon;?>"></i></span>';
-					}
-					var topItem = '<li><a href="#" data-sntarget="" class="scroll-nav-anchor to-top">' + topIcon + topTxt + topSubtxt + '</a></li>';
-					ul.prepend(topItem);
+					topItem['txt'] = '<span class="snav-title"><?php print $snav_to_top_txt;?></span>';
+					topItem['subtxt'] = '<span class="snav-subtitle"><?php print $snav_to_top_subtxt;?></span>';
+					topItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-<?php print $snav_to_top_icon;?>"></i></span>';
+
+					topElem1	= (elem[0] !== 'none') ? topItem[elem[0]] : '';
+					topElem2	= (elem[1] !== 'none') ? topItem[elem[1]] : '';
+					topElem3	= (elem[2] !== 'none') ? topItem[elem[2]] : '';
+					var topLi = '<li><a href="#" data-sntarget="" class="scroll-nav-anchor to-top">'  + topElem1 + topElem2  + topElem3 + '</a></li>';
+					ul.prepend(topLi);
 					//scroll to top animate
 					$('a.to-top', ul).click(function(e){
 						e.preventDefault();
@@ -127,20 +144,17 @@ class ScrollNavFixed extends PageLinesSection {
 				}
 				//add external link
 				if('<?php print $snav_custom_link;?>'){
-					var customTxt		= '';
-					var customSubtxt	= '';
-					var customIcon		= '';
-					if(($.inArray('txt', layout) 	!== -1) && '<?php print $snav_custom_txt;?>'){
-						customTxt		= '<span class="snav-title"><?php print $snav_custom_txt;?></span>';
-					}
-					if(($.inArray('subtxt', layout)	!== -1) && '<?php print $snav_custom_subtxt;?>'){
-						customSubtxt	= '<span class="snav-subtitle"><?php print $snav_custom_subtxt;?></span>';
-					}
-					if(($.inArray('icon', layout) 	!== -1) && '<?php print $snav_custom_icon;?>'){
-						customIcon		= '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-<?php print $snav_custom_icon;?>"></i></span>';
-					}
-					var customItem = '<li><a href="' + '<?php print $snav_custom_link;?>' + '" target="_blank" class="scroll-nav-anchor snav-custom">' + customIcon + customTxt + customSubtxt + '</a></li>';
-					ul.append(customItem);
+					customItem['txt'] = '<span class="snav-title"><?php print $snav_custom_txt;?></span>';
+					customItem['subtxt'] = '<span class="snav-subtitle"><?php print $snav_custom_subtxt;?></span>';
+					customItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-<?php print $snav_custom_icon;?>"></i></span>';
+
+					customElem1	= (elem[0] !== 'none') ? customItem[elem[0]] : '';
+					customElem2	= (elem[1] !== 'none') ? customItem[elem[1]] : '';
+					customElem3	= (elem[2] !== 'none') ? customItem[elem[2]] : '';
+					//prepend item and apply item layout
+
+					var customLi = '<li><a href="' + '<?php print $snav_custom_link;?>' + '" target="_blank" class="scroll-nav-anchor snav-custom">'  + customElem1 + customElem2 + customElem3 + '</a></li>';
+					ul.append(customLi);
 				}
 			});
 			jQuery(window).load(function(){
@@ -156,24 +170,24 @@ class ScrollNavFixed extends PageLinesSection {
 				snavLinks.each(function(){
 					var me	= $(this);
 					target	= '#' + me.data('sntarget');
-			        $(target).waypoint({handler: function(direction) {
-						var snavLink     = $('a[data-sntarget=' + $(this).attr('id') + ']', ul);
-						var snavLinkPrev = snavLink.closest('li').prev().children('a');
-			        	if (direction === "up") snavLink = snavLinkPrev;
-	                	snavLinks.removeClass('active');
-	                	snavLink.addClass('active');
-			            },offset: targetOffset
-		        	});
-    			});
-    			if( '<?php print $snav_editor; ?>' ) $('.pl-area-controls',snav).appendTo(snavContainer);
-    			//snavContainer.animate({"opacity":1},500);
-    		});
+					$(target).waypoint({handler: function(direction) {
+					var snavLink     = $('a[data-sntarget=' + $(this).attr('id') + ']', ul);
+					var snavLinkPrev = snavLink.closest('li').prev().children('a');
+					if (direction === "up") snavLink = snavLinkPrev;
+					snavLinks.removeClass('active');
+					snavLink.addClass('active');
+					},offset: targetOffset
+					});
+				});
+				if( '<?php print $snav_editor; ?>' ) $('.pl-area-controls',snav).appendTo(snavContainer);
+				//snavContainer.animate({"opacity":1},500);
+			});
 		</script>
 		<?php
 		/* menu font */
 		$font_selector = 'section#scroll-nav-fixed'.$this->meta['clone'].' div.scrollnav';
 		if ( $this->opt( 'snav_text_font' ) ) {
-				echo load_custom_font( $this->opt( 'snav_text_font' ), $font_selector );
+			echo load_custom_font( $this->opt( 'snav_text_font' ), $font_selector );
 		}
 	}
 
@@ -193,52 +207,83 @@ class ScrollNavFixed extends PageLinesSection {
 		$options = array();
 		$options[] = array(
 			'title' => __( 'Template Config', 'pagelines' ),
-			'key'	=> 'snav_conf',
+			'key'	=> 'snav_template_multi',
 			'type'	=> 'multi',
-			'span'	=> 2,
+			'col'	=> 1,
 			'opts'	=> array(
 				array(
 					'key'			=> 'snav_template',
 					'type' 			=> 'select',
 					'default'		=> $this->default_template,
-					'label' 		=> __( 'Scroll Nav Template', 'pagelines' ),
+					'label' 		=> __( 'Scroll Nav Fixed Template', 'pagelines' ),
 					'opts'			=> $this->get_template_selectvalues(),
 				),
 				array(
-                    'key'			=> 'snav_item_count',
-                    'type'          => 'count_select',
-                    'count_start'   => '1',
-                    'default'		=> '4',
-                    'count_number'  => '15',
-                    'label'    => __( 'Number of Items in the Menu', 'pagelines' )
-                ),
-                array(
-					'type' 			=> 'select',
-					'key'			=> 'snav_layout',
-					'default'		=> 'icon txt subtxt',
-					'label' 		=> __( 'Menu Items Layout', 'pagelines' ),
-					'opts'=> array(
-						'txt'               => array( 'name' => __( 'Title Menu', 'pagelines' ) ),
-						'txt subtxt'        => array( 'name' => __( 'Title and Subtitle Menu', 'pagelines' ) ),
-						'icon'              => array( 'name' => __( 'Icon Menu', 'pagelines' ) ),
-						'icon txt'          => array( 'name' => __( 'Icon and Title Menu', 'pagelines' ) ),
-						'icon txt subtxt'   => array( 'name' => __( 'All (default)', 'pagelines' ) )
-					)
+					'key'		=> 'snav_item_count',
+					'type'          	=> 'count_select',
+					'count_start'   	=> '1',
+					'default'		=> '4',
+					'count_number'	=> '15',
+					'label'    		=> __( 'Number of Items in the Menu', 'pagelines' )
 				),
 				array(
 					'key'		=> 'snav_docs',
 					'type'		=> 'link',
-					'classes'	=> 'btn-info',
+					'classes'		=> 'btn-info',
 					'url'		=> 'http://bestrag.net/scroll-nav/doc',
 					'label'		=> __( 'Docs and Config', 'pagelines' )
 				)
 			)
 		);
 		$options[] = array(
-			'title' => __( 'Scroll Nav Config', 'pagelines' ),
-			'key'	=> 'snav_conf',
+			'title' => __( 'Layout Config', 'pagelines' ),
+			'key'	=> 'snav_layout_multi',
 			'type'	=> 'multi',
-			//'span'	=> 2,
+			'col'	=> 2,
+			'opts'	=> array(
+				array(
+					'type' 			=> 'select',
+					'key'			=> 'snav_elem1',
+					'default'		=> 'icon',
+					'label' 		=> __( 'First Element', 'pagelines' ),
+					'opts'=> array(
+						'txt'               => array( 'name' => __( 'Title', 'pagelines' ) ),
+						'subtxt'        => array( 'name' => __( 'Subtitle', 'pagelines' ) ),
+						'icon'              => array( 'name' => __( 'Icon', 'pagelines' ) ),
+						'none'		=> array( 'name' => __( 'None', 'pagelines' ) ),
+					)
+				),
+				array(
+					'type' 			=> 'select',
+					'key'			=> 'snav_elem2',
+					'default'		=> 'txt',
+					'label' 		=> __( 'Second Element', 'pagelines' ),
+					'opts'=> array(
+						'txt'               => array( 'name' => __( 'Title', 'pagelines' ) ),
+						'subtxt'        => array( 'name' => __( 'Subtitle', 'pagelines' ) ),
+						'icon'              => array( 'name' => __( 'Icon', 'pagelines' ) ),
+						'none'		=> array( 'name' => __( 'None', 'pagelines' ) ),
+					)
+				),
+				array(
+					'type' 			=> 'select',
+					'key'			=> 'snav_elem3',
+					'default'		=> 'subtxt',
+					'label' 		=> __( 'Third Element', 'pagelines' ),
+					'opts'=> array(
+						'txt'               => array( 'name' => __( 'Title', 'pagelines' ) ),
+						'subtxt'        => array( 'name' => __( 'Subtitle', 'pagelines' ) ),
+						'icon'              => array( 'name' => __( 'Icon', 'pagelines' ) ),
+						'none'		=> array( 'name' => __( 'None', 'pagelines' ) ),
+					)
+				)
+			)
+		);
+		$options[] = array(
+			'title' => __( 'Scroll Nav Fixed Config', 'pagelines' ),
+			'key'	=> 'snav_conf_multi',
+			'type'	=> 'multi',
+			'col'	=> 3,
 			'opts'	=> array(
 				array(
 					'key'			=> 'snav_target_offset',
@@ -265,9 +310,9 @@ class ScrollNavFixed extends PageLinesSection {
 		);
 		$options[] = array(
 			'title' => __( 'Scroll To Top', 'pagelines' ),
-			'key'	=> 'snav_conf',
+			'key'	=> 'snav_top_item',
 			'type'	=> 'multi',
-			//'span'	=> 2,
+			'col'	=> 1,
 			'opts'	=> array(
 				array(
 					'key'			=> 'snav_to_top',
@@ -295,15 +340,15 @@ class ScrollNavFixed extends PageLinesSection {
 			'title' => __( 'Menu Items Config', 'pagelines' ),
 			'key'	=> 'snav_items_config',
 			'type'	=> 'multi',
-			'span'	=> 2,
+			'col'	=> 3,
 			'opts'	=> array(
 			)
 		);
 		//
 		$item_num = ($this->opt('snav_item_count')) ? $this->opt('snav_item_count') : 4;
 		for($i = 1; $i <= $item_num; $i++){
-            $options[3]["opts"][] = array(
-            	'title' => __( 'Custom Menu Content', 'pagelines' ),
+			$options[4]["opts"][] = array(
+				'title' => __( 'Custom Menu Content', 'pagelines' ),
 				'key'	=> 'snav_multi',
 				'type'	=> 'multi',
 				'opts'	=> array(
@@ -329,12 +374,12 @@ class ScrollNavFixed extends PageLinesSection {
 					)
 				)
 			);
-        }
+		}
 		$options[] = array(
 			'title' => __( 'Custom Link Item', 'pagelines' ),
 			'key'	=> 'snav_conf',
 			'type'	=> 'multi',
-			//'span'	=> 2,
+			'col'	=> 2,
 			'opts'	=> array(
 				array(
 					'key'			=> 'snav_custom_link',
@@ -359,35 +404,24 @@ class ScrollNavFixed extends PageLinesSection {
 			)
 		);
 		$options[] = array(
-					'key'			=> 'snav_text_font',
-					'type' 			=> 'type',
-					'label' 		=> __( 'Scroll Nav Font', 'pagelines' ),
+			'key'			=> 'snav_text_font',
+			'type' 			=> 'type',
+			'col'	=> 2,
+			'label' 		=> __( 'Scroll Nav Font', 'pagelines' ),
 		);
-        return $options;
+		return $options;
 	}
 
 	//template list for section_opts()
 	function get_template_selectvalues(){
-        $dir 	= $this->base_dir.'/less/';
-	    $files 	= glob($dir.'*.less');
-	    $array 	= array();
-	    foreach ($files as $filename) {
-	    	$file 			= basename($dir.$filename, ".less");
-	    	$array[$file] 	= array( 'name' => $file );
-	    }
-	    return $array;
-	    
-    }
+		$dir 	= $this->base_dir.'/less/';
+		$files 	= glob($dir.'*.less');
+		$array 	= array();
+		foreach ($files as $filename) {
+			$file 			= basename($dir.$filename, ".less");
+			$array[$file] 	= array( 'name' => $file );
+		}
+		return $array;
 
-	/* section_persistent */
-	function section_persistent(){
-		//add_action( 'template_redirect',array(&$this, 'snav_less') );
-	}
-
-	/* handle less template */
-	function snav_less(){
-		$template 		= ($this->meta['set']['snav_template']) ? $this->meta['set']['snav_template'] : $this->default_template;
-		$template_file 	= sprintf('%s/less/%s.less', $this->base_dir, $template);
-		pagelines_insert_core_less( $template_file );
 	}
 }

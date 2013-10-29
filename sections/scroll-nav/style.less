@@ -10,10 +10,12 @@
 		background-color: @snav-item-bg;
 		color: @snav-txt-color;
 		padding-top: 4px;
-		padding-bottom: 4px;
+		//padding-bottom: 4px;
+		margin: 1px;
 		&.active, &.active:hover{
 			color: @snav-txt-hover;
 			background-color: @snav-item-hover;
+			opacity: 1;
 			.snav-icon-holder{
 				color: @snav-icon-hover;
 			}
@@ -21,6 +23,7 @@
 		&:hover{
 			color:@snav-txt-hover;
 			background-color: @snav-item-hover;
+			opacity: .9;
 			.snav-icon-holder{
 				color: @snav-icon-hover;
 			}
@@ -29,6 +32,7 @@
 	.snav-icon-holder{
 		font-size: @snav-icon-size;
 		color: @snav-icon-color;
+		.transition(color .2s linear);
 	}
 }
 /******************** TEMPLATES ********************/
@@ -97,7 +101,7 @@
 		}
 		li{
 			float: left;
-			
+
 		}
 		a{
 			.clearfix();
@@ -121,46 +125,20 @@
 /******************** Editor styles ********************/
 form[data-sid="scroll-nav"], form[data-scope="scroll-nav"]{
 	.opt{
-		background: #252525 !important;
+		background: #2f2f2f !important;
 		min-height: 280px;
 	}
 	label{
 		color:white !important;
 		font-size:1em !important;
 	}
+	select, textarea, input{
+		margin-bottom: 10px;
+	}
 	.opt-name{
 		font-size: 1.3em !important;
-		background: lightgray !important;
+		background: white !important;
 		box-shadow: 0 0 0 !important;
+		color:@blue !important;
 	}
-	.opt-span-2{
-	  .opt-box{
-	    .clearfix;
-	    padding-right: 0px !important;
-	    >.input-wrap{
-	      float:left;
-	      width: 44%;
-	      margin-right: 15px;
-	      border: 1px solid lightgray;
-	      .border-radius(4px);
-	      padding: 8px; 
-	      margin-bottom: 8px;
-	    }
-	  }
-	}
-}
-@media screen and (max-width: 768px){
-  form[data-sid="scroll-nav"] .opt-span-2{
-    .opt-box{
-      .clearfix;
-      .input-wrap{
-        float:none;
-        display: block;
-      }
-    }
-  }  
-}
-
-form[data-scope="scroll-nav"] .opt{
-       min-height:0;
 }
