@@ -6,7 +6,7 @@
 	Class Name: ScrollNav
 	Demo: http://bestrag.net/scroll-nav/demo
 	Description: Scroll Nav allows users to build custom one-page navigation menu. It offers default blueprint set that is easy to customize or place on various portions of your page.
-	Version: 3.2
+	Version: 3.2.1
 	V3: true
 	Filter: nav
 */
@@ -556,6 +556,18 @@ class ScrollNav extends PageLinesSection {
 						'default'	=> '#FFFFFF',
 					),
 				)
+			),
+			array(
+				'type' 			=> 'select',
+				'key'			=> 'snav_mobile',
+				'default'		=> '979px',
+				'label' 		=> __( 'Hide Scroll Nav DMS on mobile devices', 'pagelines' ),
+				'opts'=> array(
+					'1024px'               => array( 'name' => __( 'Wide Tablet', 'pagelines' ) ),
+					'768px'        => array( 'name' => __( 'Tablet', 'pagelines' ) ),
+					'600px'              => array( 'name' => __( 'Mobile', 'pagelines' ) ),
+					'1px'		=> array( 'name' => __( "Don't hide", 'pagelines' ) ),
+				)
 			)
 		);
 		return $options_array;
@@ -571,6 +583,7 @@ class ScrollNav extends PageLinesSection {
 		$vars['snav-icon-hover'] 	= ( pl_setting('snav_icon_hover') ) ? pl_hashify( pl_setting( 'snav_icon_hover' ) ) : '#FFFFFF';
 		$vars['snav-txt-hover'] 	= ( pl_setting('snav_txt_hover') ) ? pl_hashify( pl_setting( 'snav_txt_hover' ) ) 	: '#FFFFFF';
 		$vars['snav-icon-size'] 	= ( pl_setting('snav_icon_size') ) ? pl_setting( 'snav_icon_size' ) 				: '3em';
+		$vars['snav-mobile'] 	= ( pl_setting('snav_mobile') ) ?  pl_setting('snav_mobile') 				: '1px';
 
 		return $vars;
 	}

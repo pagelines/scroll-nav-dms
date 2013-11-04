@@ -6,7 +6,7 @@
 	Class Name: ScrollNavFixed
 	Demo: http://bestrag.net/scroll-nav/fixed-demo
 	Description: Scroll Nav Fixed allows users to build custom one-page navigation menu. It offers default blueprint set that is easy to customize or place on various portions of your page.
-	Version: 3.2
+	Version: 3.2.1
 	V3: true
 	Filter: full-width, nav
 */
