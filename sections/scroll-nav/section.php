@@ -6,7 +6,7 @@
 	Class Name: ScrollNav
 	Demo: http://bestrag.net/scroll-nav/demo
 	Description: Scroll Nav allows users to build custom one-page navigation menu. It offers default blueprint set that is easy to customize or place on various portions of your page.
-	Version: 3.2.1
+	Version: 3.2.2
 	V3: true
 	Filter: nav
 */
@@ -56,18 +56,25 @@ class ScrollNav extends PageLinesSection {
 		$snav_icon_array	= array();
 		$snav_txt_array	= array();
 		$snav_subtxt_array	= array();
+		$title_check		= array();
 		for($i = 0; $i < $snav_item_count; $i++){
 			$ii = $i+1;
-			$snav_txt_array[$i]		= ($this->opt('snav_item'.$ii.'_txt')) ? '<span class="snav-title">'.$this->opt('snav_item'.$ii.'_txt').'</span>' : '';
-
-			$snav_icon_array[$i]	= ($this->opt('snav_item'.$ii.'_icon')) ? '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'.$this->opt('snav_item'.$ii.'_icon').'"></i></span>' : '';
-
-			$snav_subtxt_array[$i]	= ($this->opt('snav_item'.$ii.'_subtxt')) ? '<span class="snav-subtitle">'.$this->opt('snav_item'.$ii.'_subtxt').'</span>' : '';
+			if($this->opt('snav_item'.$ii.'_txt')){
+				$snav_txt_array[$i] =  '<span class="snav-title">'.$this->opt('snav_item'.$ii.'_txt').'</span>';
+				$title_check[$i] = 0;
+			}else{
+				$snav_txt_array[$i] = '<span class="snav-title">Title '.$ii.'</span>';
+				$title_check[$i] = 1;
+			}
+			$snav_icon_array[$i]	= ($this->opt('snav_item'.$ii.'_icon')) ? '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'.$this->opt('snav_item'.$ii.'_icon').'"></i></span>' : '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-anchor"></i></span>';
+			$snav_subtxt_array[$i]	= ($this->opt('snav_item'.$ii.'_subtxt')) ? '<span class="snav-subtitle">'.$this->opt('snav_item'.$ii.'_subtxt').'</span>' : '<span class="snav-subtitle">Subitle '.$ii.'</span>';
 		}
 		$snav_items['txt']		= $snav_txt_array;
 		$snav_items['subtxt']		= $snav_subtxt_array;
 		$snav_items['icon']		= $snav_icon_array;
 		$snav_items			= json_encode($snav_items);
+		$title_check			= json_encode($title_check);
+
 		?>
 		<script type="text/javascript">
 			var snav				= '';
@@ -86,11 +93,6 @@ class ScrollNav extends PageLinesSection {
 
 			jQuery(document).ready(function(){
 				$ = jQuery;
-				//get menu item elements
-				//var layout			= <?php echo json_encode($snav_layout); ?>;
-				//var snavTxt			= <?php echo json_encode($snav_txt_array); ?>;
-				//var snavSubtxt		= <?php echo json_encode($snav_subtxt_array); ?>;
-				//var snavIcon		= <?php echo json_encode($snav_icon_array); ?>;
 				var snavItems		= <?php echo $snav_items; ?>;
 				var elem		= <?php echo $snav_elem; ?>;
 				var topElem1		= '';
@@ -101,6 +103,7 @@ class ScrollNav extends PageLinesSection {
 				var customElem3	= '';
 				var topItem = [];
 				var customItem = [];
+				var titleCheck		= <?php print $title_check; ?>;
 
 				//copy vars from dom
 
@@ -123,7 +126,7 @@ class ScrollNav extends PageLinesSection {
 					a = $(this).find('a');
 					//menu item element that uses $('scroll-header[title]') atribute
 					domTitle = a.data('domTitle') ;
-					if(snavItems['txt'][i] === '') snavItems['txt'][i] = '<span class="snav-title snav-dom-title">' + domTitle + '</span>';
+					if(titleCheck[i] && domTitle !== 'undefined') snavItems['txt'][i] = '<span class="snav-title snav-dom-title">' + domTitle + '</span>';
 					elem1	= (elem[0] !== 'none') ? snavItems[elem[0]][i] : '';
 					elem2	= (elem[1] !== 'none') ? snavItems[elem[1]][i] : '';
 					elem3	= (elem[2] !== 'none') ? snavItems[elem[2]][i] : '';
@@ -132,9 +135,12 @@ class ScrollNav extends PageLinesSection {
 				});
 				//add scroll to top
 				if('<?php print $snav_to_top;?>'){
-					topItem['txt'] = '<span class="snav-title"><?php print $snav_to_top_txt;?></span>';
-					topItem['subtxt'] = '<span class="snav-subtitle"><?php print $snav_to_top_subtxt;?></span>';
-					topItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-<?php print $snav_to_top_icon;?>"></i></span>';
+					topTxt = ('<?php print $snav_to_top_txt;?>') ? '<?php print $snav_to_top_txt;?>' : 'To Top';
+					topSub = ('<?php print $snav_to_top_subtxt;?>') ? '<?php print $snav_to_top_subtxt;?>' : 'Subtitle';
+					topIcon =  ('<?php print $snav_to_top_icon;?>') ? '<?php print $snav_to_top_icon;?>' : 'home';
+					topItem['txt'] = '<span class="snav-title">'+topTxt+'</span>';
+					topItem['subtxt'] = '<span class="snav-subtitle">'+topSub+'</span>';
+					topItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'+topIcon+'"></i></span>';
 
 					topElem1	= (elem[0] !== 'none') ? topItem[elem[0]] : '';
 					topElem2	= (elem[1] !== 'none') ? topItem[elem[1]] : '';
@@ -150,9 +156,12 @@ class ScrollNav extends PageLinesSection {
 				}
 				//add external link
 				if('<?php print $snav_custom_link;?>'){
-					customItem['txt'] = '<span class="snav-title"><?php print $snav_custom_txt;?></span>';
-					customItem['subtxt'] = '<span class="snav-subtitle"><?php print $snav_custom_subtxt;?></span>';
-					customItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-<?php print $snav_custom_icon;?>"></i></span>';
+					customTxt = ('<?php print $snav_custom_txt;?>') ? '<?php print $snav_custom_txt;?>' : 'External';
+					customSub = ('<?php print $snav_custom_subtxt;?>') ? '<?php print $snav_custom_subtxt;?>' : 'Subtitle';
+					customIcon =  ('<?php print $snav_custom_icon;?>') ? '<?php print $snav_custom_icon;?>' : 'external-link';
+					customItem['txt'] = '<span class="snav-title">'+customTxt+'</span>';
+					customItem['subtxt'] = '<span class="snav-subtitle">'+customSub+'</span>';
+					customItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'+customIcon+'"></i></span>';
 
 					customElem1	= (elem[0] !== 'none') ? customItem[elem[0]] : '';
 					customElem2	= (elem[1] !== 'none') ? customItem[elem[1]] : '';
@@ -189,8 +198,8 @@ class ScrollNav extends PageLinesSection {
 					});
 				}
 				//active class
-				snavLinks		= $('a[data-sntarget]', ul);
-				snavLinks.each(function(){
+				snavLinks	= $('a[data-sntarget]', ul);
+				snavLinks.click(function(){
 					var me	= $(this);
 					target	= '#' + me.data('sntarget');
 					$(target).waypoint({handler: function(direction) {
@@ -319,16 +328,19 @@ class ScrollNav extends PageLinesSection {
 				array(
 					'key'			=> 'snav_target_offset',
 					'type' 			=> 'text',
+					'defalut'		=> '',
 					'label' 		=> __( 'Target Offset', 'pagelines' ),
 				),
 				array(
 					'key'			=> 'snav_speed',
 					'type' 			=> 'text',
+					'defalut'		=> '',
 					'label' 		=> __( 'Scroll Speed', 'pagelines' ),
 				),
 				array(
 					'key'			=> 'snav_menu_offset',
 					'type' 			=> 'text',
+					'defalut'		=> '',
 					'label' 		=> __( 'Scroll Menu Offset', 'pagelines' ),
 				)
 			)
@@ -348,16 +360,19 @@ class ScrollNav extends PageLinesSection {
 				array(
 					'key'			=> 'snav_to_top_txt',
 					'type' 			=> 'text',
+					'defalut'		=> '',
 					'label' 		=> __( 'Scroll to Top Title', 'pagelines' ),
 				),
 				array(
 					'key'			=> 'snav_to_top_subtxt',
 					'type' 			=> 'text',
+					'defalut'		=> '',
 					'label' 		=> __( 'Scroll to Top Subtitle', 'pagelines' ),
 				),
 				array(
 					'key'			=> 'snav_to_top_icon',
 					'type' 			=> 'select_icon',
+					'default'		=>  '',
 					'label' 		=> __( 'Scroll to Top Icon', 'pagelines' ),
 				)
 			)
@@ -386,16 +401,19 @@ class ScrollNav extends PageLinesSection {
 					array(
 						'key'			=> 'snav_item'.$i.'_txt',
 						'type' 			=> 'text',
+						'defalut'		=> '',
 						'label' 		=> __( 'Item '.$i.' Alternative Title', 'pagelines' ),
 					),
 					array(
 						'key'			=> 'snav_item'.$i.'_subtxt',
 						'type' 			=> 'text',
+						'defalut'		=> '',
 						'label' 		=> __( 'Item '.$i.' Subtitle', 'pagelines' ),
 					),
 					array(
 						'key'			=> 'snav_item'.$i.'_icon',
 						'type' 			=> 'select_icon',
+						'default'		=>  '',
 						'label' 		=> __( 'Item '.$i.' Icon', 'pagelines' ),
 					)
 				)
@@ -411,21 +429,25 @@ class ScrollNav extends PageLinesSection {
 				array(
 					'key'			=> 'snav_custom_link',
 					'type' 			=> 'text',
+					'defalut'		=> '',
 					'label' 		=> __( 'Custom Link Adress', 'pagelines' ),
 				),
 				array(
 					'key'			=> 'snav_custom_txt',
 					'type' 			=> 'text',
+					'defalut'		=> '',
 					'label' 		=> __( 'Custom Link Title', 'pagelines' ),
 				),
 				array(
 					'key'			=> 'snav_custom_subtxt',
 					'type' 			=> 'text',
+					'defalut'		=> '',
 					'label' 		=> __( 'Custom Link Subtitle', 'pagelines' ),
 				),
 				array(
 					'key'			=> 'snav_custom_icon',
 					'type' 			=> 'select_icon',
+					'default'		=>  '',
 					'label' 		=> __( 'Custom Link Icon', 'pagelines' ),
 				)
 			)
