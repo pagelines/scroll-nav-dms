@@ -1,0 +1,14 @@
+ /*****************************options style*****************************/
+form[data-sid="scroll-nav"] .opt, form[data-scope="scroll-nav"] .opt{background: #2f2f2f !important;}
+form[data-sid="scroll-nav"] label, form[data-scope="scroll-nav"] label{color:white !important; font-size:1em !important;}
+form[data-sid="scroll-nav"] label .btn.btn-mini, form[data-scope="scroll-nav"] label .btn.btn-mini {float: right;}
+form[data-sid="scroll-nav"] .opt-name, form[data-scope="scroll-nav"] .opt-name{font-size: 1.3em !important; background: white !important; box-shadow: 0 0 0 !important; color:#017EB9 !important;}
+form[data-sid="scroll-nav"] select, form[data-scope="scroll-nav"] select{margin-bottom: 10px;}
+form[data-sid="scroll-nav"] input, form[data-scope="scroll-nav"] input{margin-bottom: 10px;}
+form[data-sid="scroll-nav"] textarea, form[data-scope="scroll-nav"] textarea{margin-bottom: 10px;}
+form[data-sid="scroll-nav"] #master_template_settings.opt, form[data-sid="scroll-nav"] #master_template_settings.opt{background: #017EB9 !important;}
+form[data-sid="scroll-nav"] .check-standard, form[data-scope="scroll-nav"] .check-standard{display: block !important;}
+form[data-sid="scroll-nav"] .check-flip, form[data-scope="scroll-nav"] .check-flip{display: none !important;}
+#PageLinesToolbox.pl-toolbox .toolbox-panel .tab-panel form[data-sid="scroll-nav"] .opt .opt-accordion {border: 0;}
+#PageLinesToolbox.pl-toolbox .toolbox-panel .tab-panel form[data-sid="scroll-nav"] .opt .opt-accordion .opt-name{border:0; border-bottom: 1px solid #bbb; background: #2F2F2F !important; color: white !important; text-shadow: none;}
+#PageLinesToolbox.pl-toolbox .toolbox-panel .tab-panel form[data-sid="scroll-nav"] .opt .opt-accordion .opt-accordion-opts {border: 0; border-bottom: 1px solid #bbb; background: #2F2F2F;}

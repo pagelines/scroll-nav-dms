@@ -1,0 +1,14 @@
+ /*****************************options style*****************************/
+form[data-sid="scroll-nav-fixed"] .opt, form[data-scope="scroll-nav-fixed"] .opt{background: #2f2f2f !important;}
+form[data-sid="scroll-nav-fixed"] label, form[data-scope="scroll-nav-fixed"] label{color:white !important; font-size:1em !important;}
+form[data-sid="scroll-nav-fixed"] label .btn.btn-mini, form[data-scope="scroll-nav-fixed"] label .btn.btn-mini {float: right;}
+form[data-sid="scroll-nav-fixed"] .opt-name, form[data-scope="scroll-nav-fixed"] .opt-name{font-size: 1.3em !important; background: white !important; box-shadow: 0 0 0 !important; color:#017EB9 !important;}
+form[data-sid="scroll-nav-fixed"] select, form[data-scope="scroll-nav-fixed"] select{margin-bottom: 10px;}
+form[data-sid="scroll-nav-fixed"] input, form[data-scope="scroll-nav-fixed"] input{margin-bottom: 10px;}
+form[data-sid="scroll-nav-fixed"] textarea, form[data-scope="scroll-nav-fixed"] textarea{margin-bottom: 10px;}
+form[data-sid="scroll-nav-fixed"] #master_template_settings.opt, form[data-sid="scroll-nav-fixed"] #master_template_settings.opt{background: #017EB9 !important;}
+form[data-sid="scroll-nav-fixed"] .check-standard, form[data-scope="scroll-nav-fixed"] .check-standard{display: block !important;}
+form[data-sid="scroll-nav-fixed"] .check-flip, form[data-scope="scroll-nav-fixed"] .check-flip{display: none !important;}
+#PageLinesToolbox.pl-toolbox .toolbox-panel .tab-panel form[data-sid="scroll-nav-fixed"] .opt .opt-accordion {border: 0;}
+#PageLinesToolbox.pl-toolbox .toolbox-panel .tab-panel form[data-sid="scroll-nav-fixed"] .opt .opt-accordion .opt-name{border:0; border-bottom: 1px solid #bbb; background: #2F2F2F !important; color: white !important; text-shadow: none;}
+#PageLinesToolbox.pl-toolbox .toolbox-panel .tab-panel form[data-sid="scroll-nav-fixed"] .opt .opt-accordion .opt-accordion-opts {border: 0; border-bottom: 1px solid #bbb; background: #2F2F2F;}

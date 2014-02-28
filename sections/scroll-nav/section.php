@@ -6,14 +6,15 @@
 	Class Name: ScrollNav
 	Demo: http://bestrag.net/scroll-nav/demo
 	Description: Scroll Nav allows users to build custom one-page navigation menu. It offers default blueprint set that is easy to customize or place on various portions of your page.
-	Version: 3.2.2
+	Version: 3.3
 	V3: true
 	Filter: nav
 */
 class ScrollNav extends PageLinesSection {
-
-	var $default_template = 'top-center-blueprint';
-
+	var $lud_opts 		= array();
+	var $default_template	= 'top-center-blueprint';
+	var $section_id		= 'scroll-nav';
+	var $prefix		= 'snav';
 	/* section_styles */
 	function section_scripts(){
 		wp_enqueue_script( 'scrollnav', $this->base_url.'/scrollnav.js', array( 'jquery' ), true );
@@ -22,198 +23,68 @@ class ScrollNav extends PageLinesSection {
 
 	/* section_head */
 	function section_head() {
-		$snav_template		= ($this->opt('snav_template')) ? ($this->opt('snav_template')) : $this->default_template;
+		$this->lud_opts['snav_template']	= ($this->opt('snav_template')) ? ($this->opt('snav_template')) : $this->default_template;
 		//scroll options
-		$snav_speed			= ($this->opt('snav_speed')) ? ($this->opt('snav_speed')) : '800';
-		$snav_target_offset	= ($this->opt('snav_target_offset')) ? ($this->opt('snav_target_offset')) : '0';
-		$snav_menu_offset	= ($this->opt('snav_menu_offset')) ? ($this->opt('snav_menu_offset')) : '0';
-		$snav_animated		= ($this->opt('snav_animated')) ? 'true' : '';
+		$this->lud_opts['snav_speed']		= ($this->opt('snav_speed')) ? intval($this->opt('snav_speed')) : 800;
+		$this->lud_opts['snav_target_offset']	= ($this->opt('snav_target_offset')) ? intval($this->opt('snav_target_offset')) : 0;
+		$this->lud_opts['snav_menu_offset']	= ($this->opt('snav_menu_offset')) ? intval($this->opt('snav_menu_offset')) : 0;
+		$this->lud_opts['snav_animated']	= ($this->opt('snav_animated')) ? true : false;
+		$this->lud_opts['snav_editor']		= (current_user_can( 'edit_theme_options' )) ? true : false ;
 		//To top options
-		$snav_to_top		= ($this->opt('snav_to_top')) ? 'true' : '';
-		$snav_to_top_txt	= ($this->opt('snav_to_top_txt')) ? ($this->opt('snav_to_top_txt')) : '';
-		$snav_to_top_subtxt	= ($this->opt('snav_to_top_subtxt')) ? ($this->opt('snav_to_top_subtxt')) : '';
-		$snav_to_top_icon	= ($this->opt('snav_to_top_icon')) ? ($this->opt('snav_to_top_icon')) : '';
+		$this->lud_opts['snav_to_top']		= ($this->opt('snav_to_top')) ? true : false;
+		$this->lud_opts['snav_to_top_txt']	= ($this->opt('snav_to_top_txt')) ? ($this->opt('snav_to_top_txt')) : '';
+		$this->lud_opts['snav_to_top_subtxt']	= ($this->opt('snav_to_top_subtxt')) ? ($this->opt('snav_to_top_subtxt')) : '';
+		$this->lud_opts['snav_to_top_icon']	= ($this->opt('snav_to_top_icon')) ? ($this->opt('snav_to_top_icon')) : '';
 		//custom link options
-		$snav_custom_link	= ($this->opt('snav_custom_link')) ? ($this->opt('snav_custom_link')) : '';
-		$snav_custom_txt	= ($this->opt('snav_custom_txt')) ? ($this->opt('snav_custom_txt')) : '';
-		$snav_custom_subtxt	= ($this->opt('snav_custom_subtxt')) ? ($this->opt('snav_custom_subtxt')) : '';
-		$snav_custom_icon	= ($this->opt('snav_custom_icon')) ? ($this->opt('snav_custom_icon')) : '';
+		$this->lud_opts['snav_custom_link']	= ($this->opt('snav_custom_link')) ? ($this->opt('snav_custom_link')) : '';
+		$this->lud_opts['snav_custom_txt']	= ($this->opt('snav_custom_txt')) ? ($this->opt('snav_custom_txt')) : '';
+		$this->lud_opts['snav_custom_subtxt']	= ($this->opt('snav_custom_subtxt')) ? ($this->opt('snav_custom_subtxt')) : '';
+		$this->lud_opts['snav_custom_icon']	= ($this->opt('snav_custom_icon')) ? ($this->opt('snav_custom_icon')) : '';
+		//accordion opts
+		//accordion opts
+		$snav_acc_item = array('snav_item_txt' =>'', 'snav_item_subtxt' =>'', 'snav_item_icon' =>'');
+		for ($i=1; $i < 4; $i++) {
+			$def_array['item'.$i] = $snav_acc_item;
+		}
+		$snav_acc = ( !$this->opt('snav_acc') || $this->opt('snav_acc') == 'false' || !is_array($this->opt('snav_acc')) ) ? $def_array  : $this->opt('snav_acc');
+		//check if plugin update
+		$snav_item_count	= ($this->opt('snav_item_count')) ? $this->opt('snav_item_count') : '';
 		//menu items layout
-		//$snav_layout_string	= ($this->opt('snav_layout')) ? ($this->opt('snav_layout')) : 'txt subtxt icon';
-		//$snav_layout		= explode(" ", $snav_layout_string);
-
-		//milos
 		$snav_elem		= array();
 		$snav_elem[0]		= ($this->opt('snav_elem1')) ? ($this->opt('snav_elem1')) : 'icon';
 		$snav_elem[1]		= ($this->opt('snav_elem2')) ? ($this->opt('snav_elem2')) : 'txt';
 		$snav_elem[2]		= ($this->opt('snav_elem3')) ? ($this->opt('snav_elem3')) : 'subtxt';
-		$snav_elem		= json_encode($snav_elem);
-		//doovde
-
-		//put all menu item elements into arrays
-		$snav_item_count	= ($this->opt('snav_item_count')) ? $this->opt('snav_item_count') : 4;
-		$snav_items		= array();
-		$snav_icon_array	= array();
-		$snav_txt_array	= array();
-		$snav_subtxt_array	= array();
-		$title_check		= array();
-		for($i = 0; $i < $snav_item_count; $i++){
-			$ii = $i+1;
-			if($this->opt('snav_item'.$ii.'_txt')){
-				$snav_txt_array[$i] =  '<span class="snav-title">'.$this->opt('snav_item'.$ii.'_txt').'</span>';
-				$title_check[$i] = 0;
-			}else{
-				$snav_txt_array[$i] = '<span class="snav-title">Title '.$ii.'</span>';
-				$title_check[$i] = 1;
-			}
-			$snav_icon_array[$i]	= ($this->opt('snav_item'.$ii.'_icon')) ? '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'.$this->opt('snav_item'.$ii.'_icon').'"></i></span>' : '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-anchor"></i></span>';
-			$snav_subtxt_array[$i]	= ($this->opt('snav_item'.$ii.'_subtxt')) ? '<span class="snav-subtitle">'.$this->opt('snav_item'.$ii.'_subtxt').'</span>' : '<span class="snav-subtitle">Subitle '.$ii.'</span>';
-		}
-		$snav_items['txt']		= $snav_txt_array;
-		$snav_items['subtxt']		= $snav_subtxt_array;
-		$snav_items['icon']		= $snav_icon_array;
-		$snav_items			= json_encode($snav_items);
-		$title_check			= json_encode($title_check);
-
+		$this->lud_opts['snav_elem']		= $snav_elem;
+		//menu content
+		$this->item_elems($snav_acc, $def_array, $snav_item_count);
+		//go json
+		$lud_opts = json_encode($this->lud_opts);
 		?>
 		<script type="text/javascript">
-			var snav				= '';
-			var snavStickyWraper	= '';
-			var snavContainer		= '';
-			var ul					= '';
-			var lia				='';
-			var canvasOffset		= '';
-			var snavHeight			= '';
-			var snavContainerHeight	= '';
-			var targetOffset		= '';
-			var menuOffset			= '';
-			var snavLinks			= '';
-			var stickyFix			= 10;
-			var animated			= '';
-
+			var ludOpts		= {};
+			var ludSelectors	= {};
 			jQuery(document).ready(function(){
 				$ = jQuery;
-				var snavItems		= <?php echo $snav_items; ?>;
-				var elem		= <?php echo $snav_elem; ?>;
-				var topElem1		= '';
-				var topElem2		= '';
-				var topElem3		= '';
-				var customElem1	= '';
-				var customElem2	= '';
-				var customElem3	= '';
 				var topItem = [];
 				var customItem = [];
-				var titleCheck		= <?php print $title_check; ?>;
+				var cloneID 		= '<?php echo $this->meta['clone']; ?>';
+				var sectionPrefix	= '<?php echo $this->prefix; ?>';
+				var sectionClone	= jQuery('section#'+'<?php echo $this->section_id; ?>' + cloneID);
 
-				//copy vars from dom
-
-				snav				= $('section#scroll-nav'+'<?php echo $this->meta['clone']; ?>');
-				snavStickyWraper	= $('.pl-section-pad', snav);
-				snavContainer		= $('.scrollnav', snav);
-				ul			= $('ul.nav', snavContainer);
-				//offset calc		- for menu positioning and target offset
-				canvasOffset		= $('#page div.page-canvas').offset().top;
-				snavHeight			= snav.outerHeight();
-				snavContainerHeight	= snavContainer.outerHeight();
-				targetOffset		= - (canvasOffset + <?php print $snav_target_offset; ?> + snavHeight);
-				//initialize scrollNav()
-				snavContainer.scrollNav({
-						scrollSpeed:    <?php print $snav_speed; ?> ,
-						scrollOffset:   targetOffset,
-				});
-				//append/substitute menu item elements
-				ul.children().each(function( i ){
-					a = $(this).find('a');
-					//menu item element that uses $('scroll-header[title]') atribute
-					domTitle = a.data('domTitle') ;
-					if(titleCheck[i] && domTitle !== 'undefined') snavItems['txt'][i] = '<span class="snav-title snav-dom-title">' + domTitle + '</span>';
-					elem1	= (elem[0] !== 'none') ? snavItems[elem[0]][i] : '';
-					elem2	= (elem[1] !== 'none') ? snavItems[elem[1]][i] : '';
-					elem3	= (elem[2] !== 'none') ? snavItems[elem[2]][i] : '';
-					a.append(elem1, elem2, elem3);
-
-				});
-				//add scroll to top
-				if('<?php print $snav_to_top;?>'){
-					topTxt = ('<?php print $snav_to_top_txt;?>') ? '<?php print $snav_to_top_txt;?>' : 'To Top';
-					topSub = ('<?php print $snav_to_top_subtxt;?>') ? '<?php print $snav_to_top_subtxt;?>' : 'Subtitle';
-					topIcon =  ('<?php print $snav_to_top_icon;?>') ? '<?php print $snav_to_top_icon;?>' : 'home';
-					topItem['txt'] = '<span class="snav-title">'+topTxt+'</span>';
-					topItem['subtxt'] = '<span class="snav-subtitle">'+topSub+'</span>';
-					topItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'+topIcon+'"></i></span>';
-
-					topElem1	= (elem[0] !== 'none') ? topItem[elem[0]] : '';
-					topElem2	= (elem[1] !== 'none') ? topItem[elem[1]] : '';
-					topElem3	= (elem[2] !== 'none') ? topItem[elem[2]] : '';
-					//prepend item and apply item layout
-					var topLi = '<li><a href="#" data-sntarget="" class="scroll-nav-anchor to-top">'  + topElem1 + topElem2  + topElem3 + '</a></li>';
-					ul.prepend(topLi);
-					//scroll to top animate
-					$('a.to-top', ul).click(function(e){
-						e.preventDefault();
-						$("html, body").animate( { scrollTop: 0 }, <?php print $snav_speed; ?> );
-					});
-				}
-				//add external link
-				if('<?php print $snav_custom_link;?>'){
-					customTxt = ('<?php print $snav_custom_txt;?>') ? '<?php print $snav_custom_txt;?>' : 'External';
-					customSub = ('<?php print $snav_custom_subtxt;?>') ? '<?php print $snav_custom_subtxt;?>' : 'Subtitle';
-					customIcon =  ('<?php print $snav_custom_icon;?>') ? '<?php print $snav_custom_icon;?>' : 'external-link';
-					customItem['txt'] = '<span class="snav-title">'+customTxt+'</span>';
-					customItem['subtxt'] = '<span class="snav-subtitle">'+customSub+'</span>';
-					customItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'+customIcon+'"></i></span>';
-
-					customElem1	= (elem[0] !== 'none') ? customItem[elem[0]] : '';
-					customElem2	= (elem[1] !== 'none') ? customItem[elem[1]] : '';
-					customElem3	= (elem[2] !== 'none') ? customItem[elem[2]] : '';
-					//prepend item and apply item layout
-
-					var customLi = '<li><a href="' + '<?php print $snav_custom_link;?>' + '" target="_blank" class="scroll-nav-anchor snav-custom">'  + customElem1 + customElem2 + customElem3 + '</a></li>';
-					ul.append(customLi);
-				}
-			});
-			jQuery(window).load(function(){
-				$ = jQuery;
-				targetOffset  = stickyFix - targetOffset;
-				animated = '<?php print $snav_animated;?>';
-				//fix menu to top when reaches top of the document
-				if(!animated){
-					menuOffset   	= canvasOffset + <?php print $snav_menu_offset; ?> + stickyFix;
-					snavContainer.waypoint('sticky',{ offset: menuOffset }).css('top', canvasOffset);
-				}else{
-					snavContainerHeight	= snavContainer.outerHeight();
-					menuOffset   		= canvasOffset + <?php print $snav_menu_offset; ?> - snavContainerHeight - 20;
-					snavContainer.css('top', menuOffset);
-					snavStickyWraper.waypoint({
-						handler: function(direction) {
-							if (direction == 'down') {
-								snavStickyWraper.css({ 'height':snavContainerHeight });
-								snavContainer.stop().addClass("stuck").delay(200).animate({"top":canvasOffset},600);
-							} else {
-								snavStickyWraper.css({ 'height':'auto' });
-								snavContainer.stop().animate({"top":menuOffset},600).removeClass("stuck");
-							}
-						},
-						offset: menuOffset
-					});
-				}
-				//active class
-				snavLinks	= $('a[data-sntarget]', ul);
-				snavLinks.click(function(){
-					var me	= $(this);
-					target	= '#' + me.data('sntarget');
-					$(target).waypoint({handler: function(direction) {
-						var snavLink     = $('a[data-sntarget=' + $(this).attr('id') + ']', ul);
-						var snavLinkPrev = snavLink.closest('li').prev().children('a');
-						if (direction === "up") snavLink = snavLinkPrev;
-						snavLinks.removeClass('active');
-						snavLink.addClass('active');
-						},offset: targetOffset
-					});
-				});
-
-
-
+				ludSelectors[cloneID] = {
+					'sectionPrefix'	: sectionPrefix,
+					'sectionClone'	: sectionClone,
+					'sectionId'	: '<?php echo $this->section_id; ?>',
+					'StickyWraper'	: jQuery('.pl-section-pad', sectionClone),
+					'container'	: jQuery('.scrollnav', sectionClone),
+					'wraper'	: jQuery('ul.nav', sectionClone),
+					'ludItem'	: jQuery('li', sectionClone),
+					'link'		: jQuery('li > a', sectionClone)
+				};
+				//get options
+				ludOpts[cloneID]	= <?php echo $lud_opts; ?>;
+				//console.log(ludOpts[cloneID]);
+				ludSelectors[cloneID]['container'].scrollNav(ludSelectors[cloneID], ludOpts[cloneID]);
 			});
 		</script>
 		<?php
@@ -252,7 +123,7 @@ class ScrollNav extends PageLinesSection {
 					'label' 		=> __( 'Scroll Nav Template', 'pagelines' ),
 					'opts'			=> $this->get_template_selectvalues(),
 				),
-				array(
+/*				array(
 					'key'			=> 'snav_item_count',
 					'type'          => 'count_select',
 					'count_start'   => '1',
@@ -260,7 +131,7 @@ class ScrollNav extends PageLinesSection {
 					'count_number'  => '15',
 					'label'    => __( 'Number of Items in the Menu', 'pagelines' )
 				),
-				array(
+*/				array(
 					'key'			=> 'snav_animated',
 					'type' 			=> 'check',
 					'label' 		=> __( 'Enable Animated Top Menu', 'pagelines' ),
@@ -377,48 +248,34 @@ class ScrollNav extends PageLinesSection {
 				)
 			)
 		);
-		$options[] = array(
-			'title' => __( 'Menu Items Config', 'pagelines' ),
-			'key'	=> 'snav_items_config',
-			'type'	=> 'multi',
+		$options[] = 	array(
+			'title' => __( 'Custom Menu Content', 'pagelines' ),
+			'key'	=> 'snav_acc',
 			'col'	=> 3,
+			'type'	=> 'accordion',
+			'post_type'	=> __('Menu Item', 'pagelines'),
 			'opts'	=> array(
+				array(
+					'key'			=> 'snav_item_txt',
+					'type' 			=> 'text',
+					'defalut'		=> '',
+					'label'			=> 'Title'
+				),
+				array(
+					'key'			=> 'snav_item_subtxt',
+					'type' 			=> 'text',
+					'defalut'		=> '',
+					'label' 		=> __( 'Item Subtitle', 'pagelines' ),
+				),
+				array(
+					'key'			=> 'snav_item_icon',
+					'type' 			=> 'select_icon',
+					'default'		=>  '',
+					'label' 		=> __( 'Item Icon', 'pagelines' ),
+				)
 			)
 		);
-		//
-		$item_num = ($this->opt('snav_item_count')) ? $this->opt('snav_item_count') : 4;
-		for($i = 1; $i <= $item_num; $i++){
-			$options[4]["opts"][] = array(
-				'title' => __( 'Custom Menu Content', 'pagelines' ),
-				'key'	=> 'snav_multi',
-				'type'	=> 'multi',
-				'opts'	=> array(
-					array(
-						'key'			=> 'snav_item'.$i.'_header',
-						'type' 			=> 'template',
-						'template'		=> __( '<span style="font-size: 1.2em; font-weight:bold; color: white; display:block; margin-bottom: 15px; border-bottom: 1px solid white;">Menu Item '.$i.'</span>', 'pagelines' ),
-					),
-					array(
-						'key'			=> 'snav_item'.$i.'_txt',
-						'type' 			=> 'text',
-						'defalut'		=> '',
-						'label' 		=> __( 'Item '.$i.' Alternative Title', 'pagelines' ),
-					),
-					array(
-						'key'			=> 'snav_item'.$i.'_subtxt',
-						'type' 			=> 'text',
-						'defalut'		=> '',
-						'label' 		=> __( 'Item '.$i.' Subtitle', 'pagelines' ),
-					),
-					array(
-						'key'			=> 'snav_item'.$i.'_icon',
-						'type' 			=> 'select_icon',
-						'default'		=>  '',
-						'label' 		=> __( 'Item '.$i.' Icon', 'pagelines' ),
-					)
-				)
-			);
-		}
+
 		$options[] = array(
 			'title' => __( 'Custom Link Item', 'pagelines' ),
 			'key'	=> 'snav_conf',
@@ -489,12 +346,10 @@ class ScrollNav extends PageLinesSection {
 				//'icon'  => $this->icon,
 				'opts'  => $this->sec_site_options()
 		);
-
 		return $settings;
 	}
 
 	function sec_site_options(){
-
 		$options_array = array(
 			array(
 				'type' 	=> 	'multi',
@@ -609,11 +464,70 @@ class ScrollNav extends PageLinesSection {
 
 		return $vars;
 	}
-	/* handle less template */
+
+	/* handle less template
 	function snav_less(){
 		$template 		= ($this->meta['set']['snav_template']) ? $this->meta['set']['snav_template'] : $this->default_template;
 		$template_file 	= sprintf('%s/less/%s.less', $this->base_dir, $template);
 		pagelines_insert_core_less( $template_file );
 	}
-}
+	*/
 
+	//collect menu item elements
+	function item_elems($array, $def_array, $number){
+		//put all menu item elements into arrays
+		$snav_items		= array();
+		$title_check		= array();
+		//update old values
+		if($number){
+			$format = array(
+				'snav_item_txt'		=> 'snav_item%s_txt',
+				'snav_item_subtxt'	=> 'snav_item%s_subtxt',
+				'snav_item_icon'	=> 'snav_item%s_icon',
+			);
+			//update
+			$array = $this->acc_upgrade( 'snav_acc', $def_array, $format, $number);
+			// do only once
+			$this->opt_update('snav_item_count', null, 'local');
+		}
+		//snav items default
+		for($i = 0; $i < 15; $i++){
+			$ii = $i+1;
+			$snav_items['txt'][] ='<span class="snav-title">Title</span>';
+			$snav_items['subtxt'][] ='<span class="snav-subtitle">Subitle</span>';
+			$snav_items['icon'][] ='<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-anchor"></i></span>';
+			$title_check[] = 1;
+		}
+		$count = 0;
+		//update items
+		if($array & is_array($array)){
+			foreach ($array as $i => $value) {
+				if($value){
+					if(array_key_exists('snav_item_txt', $value) && $value['snav_item_txt']){
+						$snav_items['txt'][$count] =  '<span class="snav-title">'.$value['snav_item_txt'].'</span>';
+						$title_check[$count] = 0;
+					}
+					 if(array_key_exists('snav_item_icon', $value) && $value['snav_item_icon']) $snav_items['icon'][$count]	= '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'.$value['snav_item_icon'].'"></i></span>';
+					 if(array_key_exists('snav_item_subtxt', $value) && $value['snav_item_subtxt']) $snav_items['subtxt'][$count]	= '<span class="snav-subtitle">'.$value['snav_item_subtxt'].'</span>';
+				}
+				$count++;
+			}
+		}
+		//collect
+		$this->lud_opts['snav_items']	= $snav_items;
+		$this->lud_opts['title_check']	= $title_check;
+	}
+
+	//acordion options upgrade - $this->upgrade_to_array_format()
+	function acc_upgrade( $acc_key, $def_array, $format, $count ){
+			$updated_opts = array();
+			for($i = 1; $i <= $count; $i++){
+				foreach( $format as $new_key => $old_key ){
+					  if( $this->opt( sprintf($old_key, $i) ) ) $updated_opts['item'.$i][ $new_key ] =  $this->opt( sprintf($old_key, $i) );
+				}
+			}
+			$this->opt_update( $acc_key, $updated_opts, 'local' );
+			if( !PL_LESS_DEV ) pl_flush_draft_caches();
+			return $updated_opts;
+	}
+}
