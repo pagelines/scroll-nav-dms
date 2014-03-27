@@ -12,3 +12,6 @@ form[data-sid="scroll-nav-fixed"] .check-flip, form[data-scope="scroll-nav-fixed
 #PageLinesToolbox.pl-toolbox .toolbox-panel .tab-panel form[data-sid="scroll-nav-fixed"] .opt .opt-accordion {border: 0;}
 #PageLinesToolbox.pl-toolbox .toolbox-panel .tab-panel form[data-sid="scroll-nav-fixed"] .opt .opt-accordion .opt-name{border:0; border-bottom: 1px solid #bbb; background: #2F2F2F !important; color: white !important; text-shadow: none;}
 #PageLinesToolbox.pl-toolbox .toolbox-panel .tab-panel form[data-sid="scroll-nav-fixed"] .opt .opt-accordion .opt-accordion-opts {border: 0; border-bottom: 1px solid #bbb; background: #2F2F2F;}
+form[data-sid="scroll-nav-fixed"] #pl_section_styling label{color: black !important;}
+form[data-sid="scroll-nav-fixed"] #pl_section_styling, form[data-sid="scroll-nav-fixed"] #bgcolors, form[data-sid="scroll-nav-fixed"] #icon-text, form[data-sid="scroll-nav-fixed"] #active-hover{background: whitesmoke !important; /*border: 1px solid lightgray !important;*/ }
+form[data-sid="scroll-nav-fixed"] #pl_section_styling label, form[data-sid="scroll-nav-fixed"] #bgcolors label, form[data-sid="scroll-nav-fixed"] #icon-text label, form[data-sid="scroll-nav-fixed"] #active-hover label{color: black !important; }

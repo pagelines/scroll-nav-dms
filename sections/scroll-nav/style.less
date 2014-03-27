@@ -1,53 +1,35 @@
-/******************** GENERAL ********************/
-.scrollnav{
-	z-index: 1020;
-	background-color: @snav-bg;
+.section-scroll-nav .scrollnav {
+	z-index: 1030;
 	.nav{
 		margin-bottom: 0;
-		background-color: @snav-menu-bg;
 	}
 	.nav li a{
-		background-color: @snav-item-bg;
-		color: @snav-txt-color;
+		.transition(all .05s linear);
 		padding-top: 4px;
-		//padding-bottom: 4px;
 		margin: 1px;
 		&.active, &.active:hover{
-			color: @snav-txt-hover;
-			background-color: @snav-item-hover;
 			opacity: 1;
 			.snav-icon-holder{
-				color: @snav-icon-hover;
 			}
 		}
 		&:hover{
-			color:@snav-txt-hover;
-			background-color: @snav-item-hover;
 			opacity: .9;
 			.snav-icon-holder{
-				color: @snav-icon-hover;
 			}
 		}
 	}
 	.snav-icon-holder{
-		font-size: @snav-icon-size;
-		color: @snav-icon-color;
-		.transition(color .2s linear);
-	}
-}
-@media (max-width: @snav-mobile) {
-	body section.section-scroll-nav div.scrollnav{
-		display: none;
+		.transition(color .05s linear);
 	}
 }
 
-/******************** TEMPLATES ********************/
+
 .section-scroll-nav{
 	.snav-list-blueprint{
 		ul.nav{}
 		li{}
 		a{
-			.clearfix;
+			.clearfix();
 			padding: 0 8px;
 			span{
 				display:block;
@@ -74,11 +56,10 @@
 	.snav-top-center-blueprint{
 		width:100%;
 		left:0;
-		//min-height: 85px;
 		text-align: center;
 		ul.nav{
 			vertical-align: middle;
-			.fix;
+			.clearfix();
 			display: inline-block;
 		}
 		li{
@@ -99,11 +80,10 @@
 	.snav-top-inline-blueprint{
 		width:100%;
 		left:0;
-		//min-height: 85px;
 		ul.nav{
 			max-width: @plContentWidth;
 			margin: 0 auto;
-			.fix;
+			.clearfix();
 		}
 		li{
 			float: left;

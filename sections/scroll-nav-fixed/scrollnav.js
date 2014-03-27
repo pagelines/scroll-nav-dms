@@ -1,4 +1,4 @@
-// ver: 1.0
+// ver: 1.1
 var 	snavOpts	= {};
 
 jQuery(document).ready(function() {
@@ -28,14 +28,11 @@ jQuery(document).ready(function() {
 		},
 		init: function() {
 			snavOpts = this;
-			//snavOpts.options = jQuery.extend({},snavOpts.defaults,snavOpts.options);
-			//snavOpts = {selectors : snavOpts.selectors, options: snavOpts.options};
 			snavOpts.renderElements();
 			if(snavOpts.options.snav_to_top) snavOpts.toTop();
 			if(snavOpts.options.snav_custom_link) snavOpts.customLink();
 			snavOpts.calcHeights();
 			snavOpts.selectors.link.on('click.scrollNav', jQuery.proxy(snavOpts.handleClick, snavOpts));
-			//snavOpts = {selectors : snavOpts.selectors, options: snavOpts.options};
 			if(snavOpts.selectors.sectionId === 'scroll-nav-fixed') snavOpts.snavFixed();
 			if(snavOpts.selectors.sectionId === 'scroll-nav')snavOpts.snavAnimated();
 
@@ -56,7 +53,7 @@ jQuery(document).ready(function() {
 			} else  {
 				//no menu items
 				if( snavOpts.options.snav_editor ){
-					var snavInfo = '<li style="width:220px; padding-top: 4px; text-align: center;">Add scroll menu anchors to page.<a href="http://bestrag.net/scroll-nav/docs" class="btn tn-info" style="color: black; margin: 0 auto; width: 120px; padding: 0;">Find out how <i class="icon-external-link"></i></a></div>';
+					var snavInfo = '<li style="width:220px; padding-top: 4px; text-align: center;">Add scroll menu anchors to page.<a href="http://bestrag.net/scroll-nav/docs" class="btn tn-info" style="color: black; margin: 0 auto; width: 120px; padding: 0;">Find out how <i class="fa fa-external-link"></i></a></div>';
 					snavOpts.selectors.wraper.append(snavInfo);
 				}
 			}
@@ -68,7 +65,7 @@ jQuery(document).ready(function() {
 			var topItem = {};
 			topItem['txt'] = '<span class="snav-title">'+topTxt+'</span>';
 			topItem['subtxt'] = '<span class="snav-subtitle">'+topSub+'</span>';
-			topItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'+topIcon+'"></i></span>';
+			topItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="fa fa-'+topIcon+'"></i></span>';
 
 			topElem1	= (snavOpts.options.snav_elem[0] !== 'none') ? topItem[snavOpts.options.snav_elem[0]] : '';
 			topElem2	= (snavOpts.options.snav_elem[1] !== 'none') ? topItem[snavOpts.options.snav_elem[1]] : '';
@@ -89,7 +86,7 @@ jQuery(document).ready(function() {
 			var customItem = {};
 			customItem['txt'] = '<span class="snav-title">'+customTxt+'</span>';
 			customItem['subtxt'] = '<span class="snav-subtitle">'+customSub+'</span>';
-			customItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'+customIcon+'"></i></span>';
+			customItem['icon'] = '<span class="snav-icon-holder pl-animation pl-appear"><i class="fa fa-'+customIcon+'"></i></span>';
 
 			customElem1	= (snavOpts.options.snav_elem[0] !== 'none') ? customItem[snavOpts.options.snav_elem[0]] : '';
 			customElem2	= (snavOpts.options.snav_elem[1] !== 'none') ? customItem[snavOpts.options.snav_elem[1]] : '';

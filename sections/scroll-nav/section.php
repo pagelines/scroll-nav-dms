@@ -6,7 +6,7 @@
 	Class Name: ScrollNav
 	Demo: http://bestrag.net/scroll-nav/demo
 	Description: Scroll Nav allows users to build custom one-page navigation menu. It offers default blueprint set that is easy to customize or place on various portions of your page.
-	Version: 3.3
+	Version: 3.4.0
 	V3: true
 	Filter: nav
 */
@@ -15,10 +15,67 @@ class ScrollNav extends PageLinesSection {
 	var $default_template	= 'top-center-blueprint';
 	var $section_id		= 'scroll-nav';
 	var $prefix		= 'snav';
+	var $clone		= '';
+	var $ico 		= '';
+
 	/* section_styles */
 	function section_scripts(){
 		wp_enqueue_script( 'scrollnav', $this->base_url.'/scrollnav.js', array( 'jquery' ), true );
-		wp_enqueue_script( 'wpss', $this->base_url.'/waypoints-sticky.min.js', array( 'pagelines-waypoints' ), true );
+		wp_enqueue_script( 'waypoints', $this->base_url.'/waypoints.min.js', array( 'jquery' ), true );
+	}
+
+	function setup_oset($clone){
+		$this->update_lud_colors();
+		//fontAwesome for DMS 2.0
+		global $platform_build;
+		$ver = intval(substr($platform_build, 0, 1));
+		$this->ico = ($ver === 2) ? 'fa' : 'icon';
+	}
+
+	function section_styles(){
+		$snav_bg		= ($this->opt('snav_bg')) ? pl_hashify($this->opt('snav_bg')) : '#FFFFFF';
+		$snav_menu_bg	= ($this->opt('snav_menu_bg')) ? pl_hashify($this->opt('snav_menu_bg')) : '#FFFFFF';
+		$snav_item_bg		= ($this->opt('snav_item_bg')) ? pl_hashify($this->opt('snav_item_bg')) : '#FFFFFF';
+		$snav_icon_color	= ($this->opt('snav_icon_color')) ? pl_hashify($this->opt('snav_icon_color')) : '#225E9B';
+		$snav_txt_color		= ($this->opt('snav_txt_color')) ? pl_hashify($this->opt('snav_txt_color')) : '#225E9B';
+		$snav_item_hover	= ($this->opt('snav_item_hover')) ? pl_hashify($this->opt('snav_item_hover')) : '#225E9B';
+		$snav_icon_hover	= ($this->opt('snav_icon_hover')) ? pl_hashify($this->opt('snav_icon_hover')) : '#FFFFFF';
+		$snav_txt_hover	= ($this->opt('snav_txt_hover')) ? pl_hashify($this->opt('snav_txt_hover')) : '#FFFFFF';
+		$snav_icon_size	= ($this->opt('snav_icon_size')) ? $this->opt('snav_icon_size') : '48px';
+		if(is_numeric($snav_icon_size)) $snav_icon_size .= 'px';
+		$snav_mobile		= ($this->opt('snav_mobile')) ? $this->opt('snav_mobile') : '769px';
+
+		$colors=array(
+			'snav_bg'		=> array('.scrollnav' ,$snav_bg, 'background-color'),
+			'snav_menu_bg'	=> array('.scrollnav .nav', $snav_menu_bg, 'background-color'),
+			'snav_item_bg'		=> array('.scrollnav .nav li a',$snav_item_bg, 'background-color'),
+			'snav_icon_color'	=> array('.scrollnav .snav-icon-holder', $snav_icon_color, 'color'),
+			'snav_txt_color'		=> array('.scrollnav .nav li a', $snav_txt_color, 'color'),
+			'snav_item_hover1'	=> array('.scrollnav .nav li a.active:hover', $snav_item_hover, 'background-color'),
+			'snav_item_hover2'	=> array('.scrollnav .nav li a.active', $snav_item_hover, 'background-color'),
+			'snav_item_hover3'	=> array('.scrollnav .nav li a:hover', $snav_item_hover, 'background-color'),
+			'snav_icon_hover1'	=> array('.scrollnav .nav li a.active .snav-icon-holder', $snav_icon_hover, 'color'),
+			'snav_icon_hover2'	=> array('.scrollnav .nav li a.active:hover .snav-icon-holder', $snav_icon_hover, 'color'),
+			'snav_icon_hover3'	=> array('.scrollnav .nav li a:hover .snav-icon-holder', $snav_icon_hover, 'color'),
+			'snav_txt_hover1'	=> array('.scrollnav .nav li a.active', $snav_txt_hover, 'color'),
+			'snav_txt_hover2'	=> array('.scrollnav .nav li a.active:hover', $snav_txt_hover, 'color'),
+			'snav_txt_hover3'	=> array('.scrollnav .nav li a:hover', $snav_txt_hover, 'color'),
+			'snav_icon_size'		=> array('.scrollnav .snav-icon-holder', $snav_icon_size, 'font-size'),
+			'snav_mobile'		=> array('', '#', 'display'),
+		);
+
+
+		$css_code = '';
+		foreach ($colors as $key => $value) {
+			if($value[1] && $value[1] !== '#' && $value[1] !== 'px' ){
+				$css_code .= sprintf('#%4$s%5$s %1$s{%2$s:%3$s;}', $value[0], $value[2], $value[1], $this->section_id, $this->meta['clone']);
+			}
+			if($key === 'snav_mobile') $css_code .= sprintf('@media (max-width: %3$s) {body section#%1$s%2$s div.scrollnav{display:none;}}', $this->section_id, $this->meta['clone'], $snav_mobile);
+		}
+		if ($css_code) {
+			$lud_style = sprintf('<style type="text/css" id="%1$s-custom-%2$s">%3$s</style>', $this->prefix, $this->meta['clone'], $css_code);
+			echo $lud_style;
+		}
 	}
 
 	/* section_head */
@@ -123,15 +180,7 @@ class ScrollNav extends PageLinesSection {
 					'label' 		=> __( 'Scroll Nav Template', 'pagelines' ),
 					'opts'			=> $this->get_template_selectvalues(),
 				),
-/*				array(
-					'key'			=> 'snav_item_count',
-					'type'          => 'count_select',
-					'count_start'   => '1',
-					'default'		=> '4',
-					'count_number'  => '15',
-					'label'    => __( 'Number of Items in the Menu', 'pagelines' )
-				),
-*/				array(
+				array(
 					'key'			=> 'snav_animated',
 					'type' 			=> 'check',
 					'label' 		=> __( 'Enable Animated Top Menu', 'pagelines' ),
@@ -312,8 +361,97 @@ class ScrollNav extends PageLinesSection {
 		$options[] = array(
 					'key'			=> 'snav_text_font',
 					'type' 			=> 'type',
-					'col'	=> 2,
+					'col'	=> 1,
 					'label' 		=> __( 'Scroll Nav Font', 'pagelines' ),
+		);
+		$options[] =array(
+			'type' 	=> 	'multi',
+			'key'	=> 'bgcolors',
+			'col'	=> 2,
+			'title' => __( 'Background Colors', 'pagelines' ),
+			'opts'	=> array(
+				array(
+					'key'           => 'snav_bg',
+					'type'          => 'color',
+					'label'    => __( 'Scroll Nav Background', 'pagelines' ),
+					'default'	=> '',
+				),
+				array(
+					'key'           => 'snav_menu_bg',
+					'type'       => 'color',
+					'label' => __( 'Menu Background', 'pagelines' ),
+					'default'	=> '',
+				),
+				array(
+					'key'           => 'snav_item_bg',
+					'type'       => 'color',
+					'label' => __( 'Menu Item Background', 'pagelines' ),
+					'default'	=> '',
+				),
+			),
+		);
+		$options[] =array(
+			'type' 	=> 	'multi',
+			'key'	=> 'icon-text',
+			'col'	=> 3,
+			'title' => __( 'Icon and Text color & size', 'pagelines' ),
+			'opts'	=> array(
+				array(
+					'key'           => 'snav_icon_color',
+					'type'         => 'color',
+					'label'   => __( 'Icon Color', 'pagelines' ),
+					'default'	=> '',
+				),
+				array(
+					'key'           => 'snav_txt_color',
+					'type'         => 'color',
+					'label'   => __( 'Text Color', 'pagelines' ),
+					'default'	=> '',
+				),
+				array(
+					'key'           => 'snav_icon_size',
+					'type'          => 'text',
+					'label'    => __( 'Icon Size in pixels', 'pagelines' ),
+				),
+			),
+		);
+		$options[] =array(
+			'type' 	=> 	'multi',
+			'key'	=> 'active-hover',
+			'col'	=> 3,
+			'title' => __( 'Active/Hover Colors', 'pagelines' ),
+			'opts'	=> array(
+				array(
+					'key'           => 'snav_item_hover',
+					'type'         => 'color',
+					'label'   => __( 'Hover/Active Background', 'pagelines' ),
+					'default'	=> '',
+				),
+				array(
+					'key'           => 'snav_icon_hover',
+					'type'         => 'color',
+					'label'   => __( 'Hover/Active Icon', 'pagelines' ),
+					'default'	=> '',
+				),
+				array(
+					'key'           => 'snav_txt_hover',
+					'type'         => 'color',
+					'label'   => __( 'Hover/Active Text', 'pagelines' ),
+					'default'	=> '',
+				),
+			)
+		);
+		$options[] =array(
+			'type' 			=> 'select',
+			'key'			=> 'snav_mobile',
+			'col'			=> 1,
+			'label' 		=> __( 'Hide Scroll Nav DMS on mobile devices', 'pagelines' ),
+			'opts'=> array(
+				'1024px'            => array( 'name' => __( 'Tablet Landscape', 'pagelines' ) ),
+				'768px'        	=> array( 'name' => __( 'Tablet', 'pagelines' ) ),
+				'600px'              => array( 'name' => __( 'Mobile', 'pagelines' ) ),
+				'1px'		=> array( 'name' => __( "Don't hide", 'pagelines' ) ),
+			)
 		);
 		return $options;
 	}
@@ -329,13 +467,6 @@ class ScrollNav extends PageLinesSection {
 		}
 		return $array;
 
-	}
-
-	/* section_persistent */
-	function section_persistent(){
-		//add_action( 'template_redirect',array(&$this, 'snav_less') );
-		add_filter( 'pl_settings_array', array( &$this, 'get_meta_array' ) );
-		add_filter('pless_vars', array(&$this, 'add_less_vars'));
 	}
 
 	/* site options metapanel */
@@ -450,29 +581,6 @@ class ScrollNav extends PageLinesSection {
 		return $options_array;
 	}
 
-	function add_less_vars($vars){
-		$vars['snav-bg'] 		= ( pl_setting('snav_bg') ) ? pl_hashify( pl_setting( 'snav_bg' ) ) 				: '#FFFFFF';
-		$vars['snav-menu-bg'] 		= ( pl_setting('snav_menu_bg') ) ? pl_hashify( pl_setting( 'snav_menu_bg' ) ) 		: '#FFFFFF';
-		$vars['snav-item-bg'] 		= ( pl_setting('snav_item_bg') ) ? pl_hashify( pl_setting( 'snav_item_bg' ) ) 		: '#FFFFFF';
-		$vars['snav-icon-color'] 	= ( pl_setting('snav_icon_color') ) ? pl_hashify( pl_setting( 'snav_icon_color' ) ) : '#225E9B';
-		$vars['snav-txt-color'] 	= ( pl_setting('snav_txt_color') ) ? pl_hashify( pl_setting( 'snav_txt_color' ) ) 	: '#225E9B';
-		$vars['snav-item-hover'] 	= ( pl_setting('snav_item_hover') ) ? pl_hashify( pl_setting( 'snav_item_hover' ) ) : '#225E9B';
-		$vars['snav-icon-hover'] 	= ( pl_setting('snav_icon_hover') ) ? pl_hashify( pl_setting( 'snav_icon_hover' ) ) : '#FFFFFF';
-		$vars['snav-txt-hover'] 	= ( pl_setting('snav_txt_hover') ) ? pl_hashify( pl_setting( 'snav_txt_hover' ) ) 	: '#FFFFFF';
-		$vars['snav-icon-size'] 	= ( pl_setting('snav_icon_size') ) ? pl_setting( 'snav_icon_size' ) 				: '3em';
-		$vars['snav-mobile'] 	= ( pl_setting('snav_mobile') ) ?  pl_setting('snav_mobile') 				: '1px';
-
-		return $vars;
-	}
-
-	/* handle less template
-	function snav_less(){
-		$template 		= ($this->meta['set']['snav_template']) ? $this->meta['set']['snav_template'] : $this->default_template;
-		$template_file 	= sprintf('%s/less/%s.less', $this->base_dir, $template);
-		pagelines_insert_core_less( $template_file );
-	}
-	*/
-
 	//collect menu item elements
 	function item_elems($array, $def_array, $number){
 		//put all menu item elements into arrays
@@ -495,7 +603,7 @@ class ScrollNav extends PageLinesSection {
 			$ii = $i+1;
 			$snav_items['txt'][] ='<span class="snav-title">Title</span>';
 			$snav_items['subtxt'][] ='<span class="snav-subtitle">Subitle</span>';
-			$snav_items['icon'][] ='<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-anchor"></i></span>';
+			$snav_items['icon'][] ='<span class="snav-icon-holder pl-animation pl-appear"><i class="'.$this->ico.' '.$this->ico.'-anchor"></i></span>';
 			$title_check[] = 1;
 		}
 		$count = 0;
@@ -507,7 +615,7 @@ class ScrollNav extends PageLinesSection {
 						$snav_items['txt'][$count] =  '<span class="snav-title">'.$value['snav_item_txt'].'</span>';
 						$title_check[$count] = 0;
 					}
-					 if(array_key_exists('snav_item_icon', $value) && $value['snav_item_icon']) $snav_items['icon'][$count]	= '<span class="snav-icon-holder pl-animation pl-appear"><i class="icon-'.$value['snav_item_icon'].'"></i></span>';
+					 if(array_key_exists('snav_item_icon', $value) && $value['snav_item_icon']) $snav_items['icon'][$count]	= '<span class="snav-icon-holder pl-animation pl-appear"><i class="'.$this->ico.' '.$this->ico.'-'.$value['snav_item_icon'].'"></i></span>';
 					 if(array_key_exists('snav_item_subtxt', $value) && $value['snav_item_subtxt']) $snav_items['subtxt'][$count]	= '<span class="snav-subtitle">'.$value['snav_item_subtxt'].'</span>';
 				}
 				$count++;
@@ -529,5 +637,18 @@ class ScrollNav extends PageLinesSection {
 			$this->opt_update( $acc_key, $updated_opts, 'local' );
 			if( !PL_LESS_DEV ) pl_flush_draft_caches();
 			return $updated_opts;
+	}
+
+	//update section specific colors - moved from global to local in ver. 1.2
+	function update_lud_colors(){
+		$global_colors = array('snav_bg' => '', 'snav_menu_bg' => '', 'snav_item_bg' => '', 'snav_icon_color' => '', 'snav_txt_color' => '', 'snav_icon_size' => '', 'snav_item_hover' => '', 'snav_icon_hover' => '', 'snav_txt_hover' => '', 'snav_mobile' => '');
+		foreach ($global_colors as $key => $value) {
+			$global_color = pl_setting($key);
+			if($global_color && $global_color !== $value){
+				$this->opt_update($key, $global_color, 'local');
+				$this->meta['set'][$key] = $global_color;
+				pl_setting_update($key);
+			}
+		}
 	}
 }
