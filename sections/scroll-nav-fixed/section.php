@@ -6,7 +6,7 @@
 	Class Name: ScrollNavFixed
 	Demo: http://bestrag.net/scroll-nav/fixed-demo
 	Description: Scroll Nav Fixed allows users to build custom one-page navigation menu. It offers default blueprint set that is easy to customize or place on various portions of your page.
-	Version: 3.4.0
+	Version: 3.4.1
 	V3: true
 	Filter: full-width, nav
 */
@@ -21,7 +21,7 @@ class ScrollNavFixed extends PageLinesSection {
 	/* section_styles */
 	function section_scripts(){
 		wp_enqueue_script( 'scrollnav', $this->base_url.'/scrollnav.js', array( 'jquery' ), true );
-		wp_enqueue_script( 'waypoints', $this->base_url.'/waypoints.min.js', array( 'jquery' ), true );
+		//wp_enqueue_script( 'waypoints', $this->base_url.'/waypoints.min.js', array( 'jquery' ), true );
 	}
 
 	function setup_oset($clone){
