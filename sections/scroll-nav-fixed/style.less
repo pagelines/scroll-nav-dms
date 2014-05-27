@@ -1,5 +1,5 @@
 /************************************GENERAL************************************/
-.tls-container .section-scroll-nav-fixed .scrollnav{
+.section-scroll-nav-fixed .scrollnav{
 	z-index: 1030;
 	top:0;
 	.nav{
@@ -21,6 +21,11 @@
 	}
 	.snav-icon-holder{
 		.transition(color .2s linear);
+	}
+	&.snav-right-blueprint div.pl-area-controls{
+		width: 17px;
+		margin-left: -17px;
+		&:hover{margin-left: -17px;}
 	}
 }
 /******************** TEMPLATES ********************/
@@ -95,6 +100,7 @@
 		left:0;
 		top:0;
 		ul.nav{
+			max-width: @plContentWidth;
 			margin: 0 auto;
 			.clearfix();
 		}
